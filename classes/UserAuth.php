@@ -25,13 +25,14 @@ class UserAuth extends Dbh{
 
     public function login($email, $password){
         $conn = $this->db->connect();
-        $sql = "SELECT * FROM Students WHERE email='$email' AND `password`='$password'";
+        $sql = "SELECT * FROM Students WHERE email='$email' AND password='$password'";
         $result = $conn->query($sql);
+        // var_dump($conn->query($sql)); exit();
         if($result->num_rows > 0){
-            $_SESSION['email'] = $email;
-            header("Location: ../dashboard.php");
+            $_SESSION['username'] = $email;
+            header("Location: ./dashboard.php");
         } else {
-            header("Location: forms/login.php");
+            header("Location: ./forms/login.php");
         }
     }
 
@@ -93,11 +94,14 @@ class UserAuth extends Dbh{
 
     public function updateUser($username, $password){
         $conn = $this->db->connect();
-        $sql = "UPDATE users SET password = '$password' WHERE username = '$username'";
+        $sql = "UPDATE students SET `password` = '$password'  WHERE `email` = '$username'";
+        // var_dump($conn->query($sql));
         if($conn->query($sql) === TRUE){
-            header("Location: ../dashboard.php?update=success");
+            $_SESSION['username'] = $username;
+            header("Location: ./dashboard.php?update=success");
         } else {
-            header("Location: forms/resetpassword.php?error=1");
+            header("Location: ./forms/resetpassword.php?error=1");
+            
         }
     }
 
@@ -115,7 +119,7 @@ class UserAuth extends Dbh{
     public function logout($username){
         session_start();
         session_destroy();
-        header('Location: index.php');
+        header('Location: ./index.php');
     }
 
     public function confirmPasswordMatch($password, $confirmPassword){
